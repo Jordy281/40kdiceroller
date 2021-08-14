@@ -67,13 +67,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div><button class="btn btn-primary" type="button" @click="useIndomitus()">Use Indomitus</button><button class="btn btn-primary" type="button" @click="processRosters()" :disabled="!bothArmiesUploaded">Next</button>
+                                    </div><v-btn class="mr-2" @click="useIndomitus()">Use Indomitus</v-btn><v-btn @click="processRosters()" :disabled="!bothArmiesUploaded">Next</v-btn>
                                 </div>
                             </div>
                         </div>
                         <div class="row align-items-start" v-else>
                             <div class="col-lg-12 order-lg-2">
-                                <div class="p-5"><button class="btn btn-primary" type="button" @click="uploadRosterFlag = true">Upload Roster</button><button class="btn btn-primary" type="button" @click="useIndomitus()">Use Indomitus</button></div>
+                                <div class="p-5"><v-btn class="mr-2" @click="uploadRosterFlag = true">Upload Roster</v-btn><v-btn @click="useIndomitus()">Use Indomitus</v-btn></div>
                             </div>
                         </div>
                     </div>
@@ -284,8 +284,8 @@
                           </div>
                       </div>
                       <div class="btn-group" role="group" style="margin: 10px;">
-                        <button class="btn btn-primary" type="button" style="background: var(--bs-yellow);border-style: none;">CLEAR</button>
-                        <button @click="engage()" class="btn btn-primary" type="button" style="background: var(--bs-danger);">ENGAGE</button></div>
+                        <v-btn class="mr-2">CLEAR</v-btn>
+                        <v-btn class="mr-2 primary" @click="engage()">ENGAGE<v-icon>mdi-fencing</v-icon></v-btn></div>
                   </div>
               </div>
               <div class="col">
@@ -487,7 +487,7 @@ export default {
           var defaultAttack = {}
           defaultAttack.name = 'Default Attack'
           defaultAttack.ap = 0
-          defaultAttack.s = this.attackerUnit.characteristic.s.toString()
+          defaultAttack.s = 'user'
           defaultAttack.ws = this.attackerUnit.characteristic.ws.toString()
           defaultAttack.d = '1'
           weapons.push(defaultAttack)
