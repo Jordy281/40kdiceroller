@@ -18,7 +18,7 @@
                 <div class="col-lg-12 order-lg-2">
                     <div class="p-5">
                         <h2>Rosters</h2>
-                        <p>You can either upload your .ros file from BS or use the default Indomitus armies</p>
+                        <p>You can upload your roster file (.ros or .rosz) from Battle Scribe or use the default Indomitus armies</p>
                         <div class="row align-items-start" v-if="uploadRosterFlag">
                             <div class="col-lg-12 order-lg-2">
                                 <div class="p-5">
@@ -431,6 +431,7 @@
 import VuePdfEmbed from 'vue-pdf-embed/dist/vue2-pdf-embed'
 import spaceMarinesIndomitus from 'raw-loader!@/assets/Indomitus - SM.ros'
 import necronsIndomitus from 'raw-loader!@/assets/Indomitus - Necrons.ros'
+import JSZip from 'jszip'
 
 export default {
   name: 'Home',
@@ -440,10 +441,10 @@ export default {
   data () {
     return {
       selectArmy: true,
-      firstArmyFile: '',
+      firstArmyFile: null,
       army1UploadMessage: 'No File Chosen',
       firstArmy: '',
-      secondArmyFile: '',
+      secondArmyFile: null,
       army2UploadMessage: 'No File Chosen',
       secondArmy: '',
       uploadRosterFlag: false,
@@ -590,7 +591,16 @@ export default {
       this.outcome = true
     },
     clear () {
-      console.log('CLEAR')
+      this.attackerArmy = {}
+      this.attackerUnit = {}
+      this.numberOfModels = 0
+      this.attackerWeapon = {}
+      this.defenderArmy = {}
+      this.defenderUnit = {}
+      this.hitRollModifier = 0
+      this.saveRollModifier = 0
+      this.woundRollModifier = 0
+      this.combatType = ''
     },
     rollDice (diceSides) {
       const result = 1 + Math.floor(Math.random() * diceSides)
@@ -696,65 +706,98 @@ export default {
       }
       return parseInt(totalSumOfDiceRolls)
     },
-    useIndomitus () {
+    async convertRosterFile (str) {
+      var army
+      var uploadMessage
       var parseString = require('xml2js').parseString
-      parseString(spaceMarinesIndomitus, (err, result) => {
+      parseString(str, (err, result) => {
         if (err) {
           console.log(err)
-          this.army1UploadMessage = err
+          uploadMessage = err
         } else {
-          this.firstArmy = result
+          army = result
+          uploadMessage = 'Uploaded Successfully'
         }
       })
-      parseString(necronsIndomitus, (err, result) => {
-        if (err) {
-          console.log(err)
-          this.army2UploadMessage = err
-        } else {
-          this.secondArmy = result
-        }
+      return [uploadMessage, army]
+    },
+    async readZippedFile (zippedArmyFile) {
+      var roster
+      var jszip = new JSZip()
+      var zippedArmyFileName = zippedArmyFile.name
+      var zip = await jszip.loadAsync(zippedArmyFile)
+      zip.forEach(function (relativePath, file) {
+        console.log('Reading Zipped File:' + zippedArmyFileName + ' -> ' + file.name)
+        var data = zip.file(file.name).async('string')
+        roster = data
+      })
+      return roster
+    },
+    async useIndomitus () {
+      var self = this
+      await this.convertRosterFile(spaceMarinesIndomitus).then(function (status) {
+        self.army1UploadMessage = status[0]
+        self.firstArmy = status[1]
+      })
+      self = this
+      await this.convertRosterFile(necronsIndomitus).then(function (status) {
+        self.army2UploadMessage = status[0]
+        self.secondArmy = status[1]
       })
       this.processRosters()
     },
-    selectFirstFile (event) {
+    async selectFirstFile (event) {
       if (!this.firstArmyFile) {
         this.army1UploadMessage = 'No File Chosen'
       }
-      const reader = new FileReader()
-      var parseString = require('xml2js').parseString
-      // Use the javascript reader object to load the contents
-      // of the file in the v-model prop
-      reader.readAsText(this.firstArmyFile)
-      reader.onload = () => {
-        parseString(reader.result, (err, result) => {
-          if (err) {
-            console.log(err)
-            this.army1UploadMessage = err
-          } else {
-            this.firstArmy = result
-            this.army1UploadMessage = 'Uploaded Successfully'
-          }
+      // the zipped roster file
+      if (this.firstArmyFile.name.endsWith('.rosz')) {
+        var rosterString = await this.readZippedFile(this.firstArmyFile)
+        var self = this
+        this.convertRosterFile(rosterString).then(function (status) {
+          self.army1UploadMessage = status[0]
+          self.firstArmy = status[1]
         })
+      // The unzipped roster file
+      } else if (this.firstArmyFile.name.endsWith('.ros')) {
+        const reader = new FileReader()
+        reader.readAsText(this.firstArmyFile)
+        reader.onload = () => {
+          var self = this
+          this.convertRosterFile(reader.result).then(function (status) {
+            self.army1UploadMessage = status[0]
+            self.firstArmy = status[1]
+          })
+        }
+      } else {
+        this.army1UploadMessage = 'Unrecognized Filetype'
       }
     },
-    selectSecondFile (event) {
+    async selectSecondFile (event) {
       if (!this.secondArmyFile) {
         this.army2UploadMessage = 'No File Chosen'
       }
-      const reader = new FileReader()
-      var parseString = require('xml2js').parseString
-      // Use the javascript reader object to load the contents
-      // of the file in the v-model prop
-      reader.readAsText(this.secondArmyFile)
-      reader.onload = () => {
-        parseString(reader.result, (err, result) => {
-          if (err) {
-            this.army2UploadMessage = err
-          } else {
-            this.secondArmy = result
-            this.army2UploadMessage = 'Uploaded Successfully'
-          }
+      // the zipped roster file
+      if (this.secondArmyFile.name.endsWith('.rosz')) {
+        var rosterString = await this.readZippedFile(this.secondArmyFile)
+        var self = this
+        this.convertRosterFile(rosterString).then(function (status) {
+          self.army2UploadMessage = status[0]
+          self.secondArmy = status[1]
         })
+      // The unzipped roster file
+      } else if (this.secondArmyFile.name.endsWith('.ros')) {
+        const reader = new FileReader()
+        reader.readAsText(this.secondArmyFile)
+        reader.onload = () => {
+          var self = this
+          this.convertRosterFile(reader.result).then(function (status) {
+            self.army2UploadMessage = status[0]
+            self.secondArmy = status[1]
+          })
+        }
+      } else {
+        this.army2UploadMessage = 'Unrecognized Filetype'
       }
     },
     processRosters () {
