@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <nav class="navbar navbar-dark navbar-expand-lg fixed-top bg-dark navbar-custom">
-        <div class="container"><a class="navbar-brand" href="#">40k Dice Roller</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navbarResponsive"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="container"><a class="navbar-brand" href="#">Grim Dark Dice Roller</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navbarResponsive"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     <li v-if="false" class="nav-item"><a class="nav-link" href="#">Sign Up</a></li>
@@ -15,7 +15,7 @@
     </v-main>
     <footer class="py-5 bg-black">
         <div class="container">
-            <p class="text-center text-white m-0 small">This site is not related to Games Workshop in anyway. <br/>GW please dont sick the inquisition on me.</p>
+            <p class="text-center text-white m-0 small">This site is not related to Games Workshop in anyway. <br/>GW please dont sick the inquisition on me.<br/>Any bugs or requests can be filed on my <a href="https://github.com/Jordy281/40kdiceroller/issues">Github</a></p>
         </div>
     </footer>
   </v-app>
