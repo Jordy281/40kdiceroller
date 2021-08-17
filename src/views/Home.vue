@@ -345,6 +345,17 @@
           </div>
       </div>
     </section>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div>
+                        <p>FYI - This app is built for new players, or poor unfortunate souls who get roped into being a sparring partner, and dont want to figure out how to read a datasheet. This does not take into account any Abilities (except Blast) or special rolls like auto wound</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="cheatsheetheader"
       :style = "{backgroundImage: 'url(' + require('@/assets/img/background.jpg') + ')'}"
       style="transform-origin: center; background-position: center center; background-size: cover;">>
@@ -381,7 +392,7 @@
     <section id="terrain">
       <div class="container">
           <div class="row"><div class="col">
-            <p> Some Useful Links when getting started with 40k </p>
+            <p> Some useful links when getting started with 40k </p>
             <v-list-item two-line href="https://wahapedia.ru/wh40k9ed/the-rules/playing-this-game">
               <v-list-item-content>
                 <v-list-item-title>Wahapedia</v-list-item-title>
@@ -411,17 +422,6 @@
       </div>
     </section>
     <section></section>
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div>
-                        <p>FYI - This app does not take into account any Abilities (except Blast) or special rolls like auto wound</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
   </div>
 </template>
 
